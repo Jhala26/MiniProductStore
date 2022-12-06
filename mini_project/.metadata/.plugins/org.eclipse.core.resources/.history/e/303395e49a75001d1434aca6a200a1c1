@@ -1,0 +1,61 @@
+package com.masai.controller;
+
+import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.masai.exception.UserException;
+import com.masai.model.User;
+import com.masai.service.UserService;
+
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+
+@RestController
+public class UserController {
+
+	@Autowired
+	private UserService uService;
+	
+	
+	
+	
+	@PostMapping("/addUser")
+	public ResponseEntity<User> addingUserHandler(@Valid @RequestBody User user) throws UserException {
+		User usr = uService.addingUser(user);
+		return new ResponseEntity<User>(usr,HttpStatus.CREATED);
+	}
+	
+	
+	
+	@PutMapping("/updateUser")
+	public ResponseEntity<User> updatingUserHandler(@Valid @RequestBody User user,@RequestParam String key) throws UserException {
+		User usr = uService.updatingUser(user,key);
+		return new ResponseEntity<User>(usr,HttpStatus.ACCEPTED);
+	}
+	
+	@DeleteMapping("delete/{userId}")
+	public ResponseEntity<User> deleteUserHandler(@PathVariable("userId") Integer userId,@RequestParam String key) throws UserException {
+		User u=uService.deleteUser(userId, key);
+		return new ResponseEntity<User>(u,HttpStatus.ACCEPTED);
+	}
+	
+	@GetMapping("/view/{userId}")
+	public ResponseEntity<User> viewUserHandler(@PathVariable("userId") Integer userId,@RequestParam String key) throws UserException {
+		User u=uService.viewUser(userId,key);
+		return new ResponseEntity<User>(u,HttpStatus.FOUND);
+	}
+	
+	@GetMapping("/viewall")
+	public ResponseEntity<List<User>> viewAllUsersHandler(@RequestParam String key) throws UserException {
+		List<User> users=uService.viewAllUsers(key);
+		return new ResponseEntity<List<User>>(users,HttpStatus.FOUND);
+	}
+	
+	
+}

@@ -1,0 +1,144 @@
+package com.masai.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.masai.exception.LoginException;
+import com.masai.exception.OrderException;
+import com.masai.exception.ProductException;
+import com.masai.exception.UserException;
+import com.masai.model.Cart;
+import com.masai.model.Order;
+import com.masai.model.Product;
+import com.masai.model.User;
+import com.masai.model.runningUserSession;
+import com.masai.repository.CartDao;
+import com.masai.repository.OrderDao;
+import com.masai.repository.RunningSessionDao;
+import com.masai.repository.UserDao;
+
+@Service
+public class OrderServiceImpl implements OrderService{
+	
+	@Autowired
+	private UserDao uDao;
+	
+	@Autowired
+	private CartDao cDao;
+	
+	@Autowired
+	private RunningSessionDao rDao;
+	
+	@Autowired
+	private OrderDao oDao;
+	
+
+	@Override
+	public Order userPlacingOrder(String key) throws OrderException, UserException {
+		
+		
+		runningUserSession logInUser = rDao.findByUuid(key);
+		
+		if(logInUser == null) {
+			
+			throw new UserException("Please provide a valid key.");
+			
+		}
+		
+		User user = uDao.findById(logInUser.getUserId()).orElseThrow(() -> new UserException("User with Id "+ logInUser.getUuid() + "not found")); 
+		
+		if(user.getUserLoginId() == logInUser.getUserId()) {
+			
+			Order o1 = new Order();
+			
+			user.getCart().setCartTotalValu();
+			o1.setOrderAmount(user.getCart().getCartTotalValue());
+			o1.setProductList(user.getCart().getProList());
+			o1.setOrderStatus("Placed");
+			user.getCart().setcarttotalvalue(null);
+			user.getCart().setProList(null);
+			
+			cDao.save(user.getCart());
+			
+			return oDao.save(o1);
+		}
+		else {
+			throw new UserException("Invalid User id");
+		}
+		
+		
+	}
+
+
+	@Override
+	public Order userCancellingOrder(Integer orderId, String key) throws OrderException, UserException {
+		
+		runningUserSession logInUser = rDao.findByUuid(key);
+		
+		if(logInUser == null) {
+			
+			throw new UserException("Please provide a valid key.");
+			
+		}
+		
+		User user = uDao.findById(logInUser.getUserId()).orElseThrow(() -> new UserException("User with Id "+ logInUser.getUuid() + "not found")); 
+		
+		if(user.getUserLoginId() == logInUser.getUserId()) {
+			
+			List<Order> userOrders = user.getUserOrders();
+			
+			boolean flag = true;
+			
+			for(Order o : userOrders) {
+				
+				if(o.getOrderId() == orderId) {
+					
+					flag = false;
+					o.setOrderStatus("Canceled");
+					return oDao.save(o);
+					
+				}
+				
+			}
+			
+			if(flag) {
+				throw new OrderException("No order Found..!");
+			}
+			
+		}
+		else {
+			throw new UserException("Invalid User id");
+		}
+		
+		
+	}
+
+
+	@Override
+	public List<Order> userViewingOrder(String key) throws OrderException, UserException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public Order adminViewingOrderById(Integer orderId, String key) throws OrderException, LoginException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public List<Order> adminViewingAllOrders(String key) throws OrderException, LoginException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	
+
+	
+
+}

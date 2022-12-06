@@ -1,0 +1,34 @@
+package com.masai.service;
+
+import com.masai.exception.CartException;
+import com.masai.exception.ProductException;
+import com.masai.exception.UserException;
+import com.masai.model.Cart;
+import com.masai.model.Product;
+import com.masai.repository.ProductDao;
+import com.masai.repository.UserDao;
+import com.masai.repository.runningSessionDao;
+
+public class CartServiceImpl implements CartService{
+	
+	
+	private CartService cDao;
+	
+	private ProductDao pDao;
+	
+	private UserDao uDao;
+	
+	private runningSessionDao rDao;
+	
+	
+	
+
+	@Override
+	public Cart addNewProductToCart(Product product, String key) throws ProductException, CartException, UserException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	
+}

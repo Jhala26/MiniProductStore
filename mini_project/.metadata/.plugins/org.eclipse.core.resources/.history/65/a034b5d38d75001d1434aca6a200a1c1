@@ -1,0 +1,50 @@
+package com.masai.controller;
+
+import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.masai.exception.CategoryException;
+import com.masai.exception.LoginException;
+import com.masai.exception.OrderException;
+import com.masai.exception.UserException;
+import com.masai.model.Category;
+import com.masai.model.Order;
+import com.masai.service.OrderService;
+
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+
+@RestController
+public class OrderServiceController {
+
+	@Autowired
+	private OrderService oService;
+	
+	
+	
+	@PostMapping("/order")
+    public ResponseEntity<Order> userPlacingOrderHandler(@Valid @RequestParam String key) throws OrderException, UserException {
+		
+		 Order ord = oService.userPlacingOrder(key);
+		
+		return new ResponseEntity<Order>(ord, HttpStatus.CREATED);
+	}
+	
+	
+	
+	@PostMapping("/order/{orderId}")
+    public ResponseEntity<Order> userCancellingOrderHandler(@Valid @PathVariable("orderId") Integer orderId ,@RequestParam String key) throws OrderException, UserException {
+		
+		 Order ord = oService.userPlacingOrder(key);
+		
+		return new ResponseEntity<Order>(ord, HttpStatus.CREATED);
+	}
+	
+	
+}

@@ -1,0 +1,12 @@
+package com.masai.model;
+
+import javax.validation.constraints.NotNull;
+
+public class AdminDTO {
+
+	@NotNull(message ="Username cannot be null.")
+	private String userName;
+	@NotNull(message ="Password cannot be null.")
+	private String password;
+	
+}

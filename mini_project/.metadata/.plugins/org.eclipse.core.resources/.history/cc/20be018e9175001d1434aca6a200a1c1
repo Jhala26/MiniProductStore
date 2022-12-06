@@ -1,0 +1,81 @@
+package com.masai.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.masai.exception.LoginException;
+import com.masai.exception.OrderException;
+import com.masai.exception.ProductException;
+import com.masai.model.Order;
+import com.masai.model.Product;
+import com.masai.model.runningUserSession;
+import com.masai.repository.ProductDao;
+import com.masai.repository.RunningSessionDao;
+
+@Service
+public class ProductServiceImpl implements ProductService{
+
+	@Autowired
+	private ProductDao pDao;
+	
+	@Autowired
+	private RunningSessionDao rDao;
+
+	
+	
+	
+	@Override
+	public Product addingProduct(Product product, String key) throws ProductException, LoginException {
+		
+		runningUserSession logInUser = rDao.findByUuid(key);
+		
+		if(logInUser == null) {
+			
+			throw new LoginException("Please provide a valid key.");
+			
+		}
+		
+		if(logInUser.getType() == "Admin") {
+			
+			
+			Product pro = pDao.findByName(product.getName());
+			
+			return pro;
+			
+		}
+		else {
+			throw new LoginException("Not a Authorised user");
+		}
+		
+		
+	}
+
+	@Override
+	public Product updatingProduct(Product product, String key) throws ProductException, LoginException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Product deletingProduct(Integer productId, String key) throws ProductException, LoginException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Product viewProductById(Integer productId, String key) throws ProductException, LoginException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Product> viewAllProducts(String key) throws ProductException, LoginException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	
+	
+}

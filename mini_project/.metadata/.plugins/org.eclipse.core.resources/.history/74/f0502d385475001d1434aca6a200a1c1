@@ -1,0 +1,11 @@
+package com.masai.repository;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.masai.model.runningUserSession;
+
+public interface runningSessionDao extends JpaRepository<runningUserSession, Integer>{
+
+	public runningUserSession findByUid(String uuid);
+	
+}

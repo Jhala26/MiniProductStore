@@ -1,0 +1,57 @@
+package com.masai.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.masai.exception.CategoryException;
+import com.masai.exception.LoginException;
+import com.masai.model.Category;
+import com.masai.repository.CategoryDao;
+import com.masai.repository.RunningSessionDao;
+
+@Service
+public class CategoryServiceImpl implements CategoryService{
+	
+	@Autowired
+	private CategoryDao cDao;
+	
+	@Autowired
+	private RunningSessionDao rDao;
+	
+
+	@Override
+	public Category addCategory(Category category, String key) throws CategoryException, LoginException {
+		
+		
+		
+		
+		return null;
+	}
+
+	@Override
+	public Category updateCategory(Category product, String key) throws CategoryException, LoginException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Category deleteCategory(Integer cId, String key) throws CategoryException, LoginException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Category viewCategory(Integer cId, String key) throws CategoryException, LoginException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Category> viewAllCategory(String key) throws CategoryException, LoginException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

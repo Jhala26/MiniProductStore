@@ -1,0 +1,179 @@
+package com.masai.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.masai.exception.LoginException;
+import com.masai.exception.OrderException;
+import com.masai.exception.ProductException;
+import com.masai.model.Order;
+import com.masai.model.Product;
+import com.masai.model.runningUserSession;
+import com.masai.repository.ProductDao;
+import com.masai.repository.RunningSessionDao;
+
+@Service
+public class ProductServiceImpl implements ProductService{
+
+	@Autowired
+	private ProductDao pDao;
+	
+	@Autowired
+	private RunningSessionDao rDao;
+
+	
+	
+	
+	@Override
+	public Product addingProduct(Product product, String key) throws ProductException, LoginException {
+		
+		runningUserSession logInUser = rDao.findByUuid(key);
+		
+		if(logInUser == null) {
+			
+			throw new LoginException("Please provide a valid key.");
+			
+		}
+		
+		if(logInUser.getType() == "Admin") {
+			
+			
+			Product pro = pDao.findByName(product.getName());
+			
+			if(pro != null) {
+				
+				throw new ProductException("Product with this name is already their");
+			}
+			else {
+				
+				return pDao.save(product);
+				
+			}
+			
+		}
+		else {
+			throw new LoginException("Not a Authorised user");
+		}
+		
+		
+	}
+
+	@Override
+	public Product updatingProduct(Product product, String key) throws ProductException, LoginException {
+		
+		runningUserSession logInUser = rDao.findByUuid(key);
+		
+		if(logInUser == null) {
+			
+			throw new LoginException("Please provide a valid key.");
+			
+		}
+		
+		if(logInUser.getType() == "Admin") {
+			
+			
+			Product pro = pDao.findById(product.getProductId()).orElseThrow(() -> new ProductException("Product with Id " + product.getProductId() + " does not exist"));
+			
+			if(product.getName() != null) pro.setName(product.getName());
+			if (product.getPrice() != null) pro.setPrice(product.getPrice());
+			if (product.getQuantity() != null) pro.setQuantity(product.getQuantity());
+			if (product.getCategory() != null) pro.setCategory(product.getCategory());
+			
+			
+			return pDao.save(pro);
+			
+		}
+		else {
+			throw new LoginException("Not a Authorised user");
+		}
+		
+		
+	}
+
+	@Override
+	public Product deletingProduct(Integer productId, String key) throws ProductException, LoginException {
+		
+		runningUserSession logInUser = rDao.findByUuid(key);
+		
+		if(logInUser == null) {
+			
+			throw new LoginException("Please provide a valid key.");
+			
+		}
+		
+		if(logInUser.getType() == "Admin") {
+			
+			
+			Product pro = pDao.findById(productId).orElseThrow(() -> new ProductException("Product with Id " + productId + " does not exist"));
+			
+			pDao.delete(pro);
+			
+			return pro;
+			
+		}
+		else {
+			throw new LoginException("Not a Authorised user");
+		}
+		
+		
+	}
+
+	@Override
+	public Product viewProductById(Integer productId, String key) throws ProductException, LoginException {
+		
+		runningUserSession logInUser = rDao.findByUuid(key);
+		
+		if(logInUser == null) {
+			
+			throw new LoginException("Please provide a valid key.");
+			
+		}
+		
+		if(logInUser.getType() == "Admin") {
+			
+			
+			Product pro = pDao.findById(productId).orElseThrow(() -> new ProductException("Product with Id " + productId + " does not exist"));
+			
+			
+			return pro;
+			
+		}
+		else {
+			throw new LoginException("Not a Authorised user");
+		}
+		
+		
+	}
+
+	@Override
+	public List<Product> viewAllProducts(String key) throws ProductException, LoginException {
+		
+		runningUserSession logInUser = rDao.findByUuid(key);
+		
+		if(logInUser == null) {
+			
+			throw new LoginException("Please provide a valid key.");
+			
+		}
+		
+		if(logInUser.getType() == "Admin") {
+			
+			List<Product> pro = pDao.findAll();
+			
+			if(pro.size() == 0) {
+				throw new ProductException("No Product...!");
+			}
+			
+		}
+		else {
+			throw new LoginException("Not a Authorised user");
+		}
+		
+		
+	}
+	
+	
+	
+}

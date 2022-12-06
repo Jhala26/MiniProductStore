@@ -1,0 +1,82 @@
+package com.masai.controller;
+
+import java.util.List;
+
+import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.masai.exception.CategoryException;
+import com.masai.exception.LoginException;
+import com.masai.exception.OrderException;
+import com.masai.exception.UserException;
+import com.masai.model.Category;
+import com.masai.model.Order;
+import com.masai.service.OrderService;
+
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+
+@RestController
+public class OrderServiceController {
+
+	@Autowired
+	private OrderService oService;
+	
+	
+	
+	@PostMapping("/userOrder")
+    public ResponseEntity<Order> userPlacingOrderHandler(@Valid @RequestParam String key) throws OrderException, UserException {
+		
+		 Order ord = oService.userPlacingOrder(key);
+		
+		return new ResponseEntity<Order>(ord, HttpStatus.CREATED);
+	}
+	
+	
+	
+	@PutMapping("/userOrder/{orderId}")
+    public ResponseEntity<Order> userCancellingOrderHandler(@Valid @PathVariable("orderId") Integer orderId ,@RequestParam String key) throws OrderException, UserException {
+		
+		 Order ord = oService.userCancellingOrder(orderId, key);
+		
+		return new ResponseEntity<Order>(ord, HttpStatus.ACCEPTED);
+	}
+	
+	
+	@GetMapping("/UserViewOrder")
+    public ResponseEntity<List<Order>> userViewingOrderHandler(@Valid @RequestParam String key) throws OrderException, UserException {
+		
+		List<Order> ord = oService.userViewingOrder(key);
+		
+		return new ResponseEntity<List<Order>>(ord, HttpStatus.FOUND);
+	}
+	
+	
+	@GetMapping("/adminViewOrder/{orderId}")
+    public ResponseEntity<Order> adminViewingOrderByIdHandler(@Valid @PathVariable("orderId") Integer orderId ,@RequestParam String key) throws OrderException, LoginException {
+		
+		 Order ord = oService.adminViewingOrderById(orderId, key);
+		
+		return new ResponseEntity<Order>(ord, HttpStatus.ACCEPTED);
+	}
+	
+	
+	@GetMapping("/adminViewAllOrder")
+    public ResponseEntity<List<Order>> adminViewingAllOrdersHandler(@Valid @RequestParam String key) throws OrderException, UserException {
+		
+		List<Order> ord = oService.userViewingOrder(key);
+		
+		return new ResponseEntity<List<Order>>(ord, HttpStatus.FOUND);
+	}
+	
+	
+	
+}

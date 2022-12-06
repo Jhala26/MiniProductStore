@@ -1,0 +1,62 @@
+package com.masai.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.masai.exception.UserException;
+import com.masai.model.User;
+import com.masai.repository.RunningSessionDao;
+import com.masai.repository.UserDao;
+
+@Service
+public class UserServiceImpl implements UserService{
+
+	@Autowired
+	private UserDao uDao;
+	
+	@Autowired
+	private RunningSessionDao rDao;
+
+	
+	@Override
+	public User addingUser(User user) throws UserException {
+		
+		User userr = uDao.findByUserName(user.getUserName());
+		
+		if(userr == null) {
+			
+			return uDao.save(user);
+		}
+		else {
+			throw new UserException("This UserName is already used..!");
+		}
+		
+	}
+
+	@Override
+	public User updatingUser(User user, String key) throws UserException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public User deletingUser(Integer userId, String key) throws UserException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public User viewUserById(Integer userId, String key) throws UserException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<User> viewAllUsers(String key) throws UserException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+}

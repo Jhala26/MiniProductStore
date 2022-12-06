@@ -1,0 +1,15 @@
+package com.masai.service;
+
+import org.springframework.stereotype.Service;
+
+import com.masai.repository.ProductDao;
+import com.masai.repository.RunningSessionDao;
+
+@Service
+public class ProductServiceImpl implements ProductService{
+
+	private ProductDao pDao;
+	
+	private RunningSessionDao rDao;
+	
+}

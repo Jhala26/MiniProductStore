@@ -1,0 +1,61 @@
+package com.masai.controller;
+
+import javax.validation.Valid;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.masai.exception.LoginException;
+import com.masai.exception.ProductException;
+import com.masai.model.Product;
+import com.masai.service.ProductService;
+
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+
+@RestController
+public class ProductController {
+
+	
+	private ProductService pService;
+	
+	
+	
+	@PostMapping("/addProduct")
+    public ResponseEntity<Product> addProductHandler(@Valid @RequestBody Product product,@RequestParam String key) throws ProductException, LoginException{
+		
+		Product pro = pService.addingProduct(product,key);
+		
+		return new ResponseEntity<Product>(pro, HttpStatus.CREATED);
+	}
+	
+	@PutMapping("/updateProduct")
+	public ResponseEntity<Product> updateProductHandler( @Valid @RequestBody Product product,@RequestParam String key) throws ProductException, LoginException{
+		
+		Product pro = pService.updatingProduct(product,key);
+		
+		return new ResponseEntity<Product>(pro, HttpStatus.ACCEPTED);
+		
+	}
+	
+	@GetMapping("/view/{productId}")
+	public ResponseEntity<Product> viewProductHandler(@PathVariable("productId") Integer productId,@RequestParam String key) throws ProductException, LoginException{
+		
+		Product p = pservice.viewProduct(productId,key);
+		
+		return new ResponseEntity<Product>(p, HttpStatus.FOUND);
+	}
+	
+	@GetMapping("/viewAll")
+	public ResponseEntity<List<Product>> viewAllProductHandler(@RequestParam String key) throws ProductException, LoginException{
+		
+		List<Product> p = pservice.viewAllProduct(key);
+		
+		return new ResponseEntity<List<Product>>(p, HttpStatus.FOUND);
+	}
+	
+	
+}

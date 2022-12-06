@@ -1,0 +1,17 @@
+package com.masai.service;
+
+import com.masai.exception.CartException;
+import com.masai.exception.ProductException;
+import com.masai.exception.UserException;
+import com.masai.model.Cart;
+import com.masai.model.Product;
+
+public interface CartService {
+
+	public Cart addNewProductToCart(Integer productId, String key) throws ProductException, CartException, UserException;
+	
+	public Cart deleteProductFromCart(Integer productId, String key) throws ProductException, UserException, CartException;
+	
+	public Cart viewCart(String key)throws UserException, CartException;
+	
+}

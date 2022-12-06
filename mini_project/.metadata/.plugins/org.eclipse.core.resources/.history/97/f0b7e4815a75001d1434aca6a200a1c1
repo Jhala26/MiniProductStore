@@ -1,0 +1,65 @@
+package com.masai.service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.masai.exception.LoginException;
+import com.masai.exception.UserException;
+import com.masai.model.runningUserSession;
+import com.masai.model.LoginDTO;
+import com.masai.model.User;
+import com.masai.repository.runningSessionDao;
+import com.masai.repository.UserDao;
+import com.masai.repository.UserDao;
+import com.masai.repository.runningSessionDao;
+
+import net.bytebuddy.utility.RandomString;
+
+@Service
+public class LoginServiceImpl implements LoginService{
+	
+	@Autowired
+	private UserDao uDao;
+	
+	@Autowired
+	private runningSessionDao rDao;
+
+	@Override
+	public String logIntoAccount(LoginDTO dto) throws LoginException {
+		
+		User user=uDao.findByUserName(dto.getUserName());
+		
+		if(user==null) {
+			throw new LoginException("Please Enter a valid username.");
+		}
+		Optional<runningUserSession> validUserSessionOpt =rDao.findById(user.getUserLoginId());
+		if(validUserSessionOpt.isPresent()) {
+			throw new LoginException("User already Logged in with this username.");
+		}
+		if(user.getPassword().equals(dto.getPassword())) {
+			String key=RandomString.make(6);
+			runningUserSession currentUserSession=new runningUserSession(user.getUserLoginId(),"user",key,LocalDateTime.now());
+			rDao.save(currentUserSession);
+			return currentUserSession.toString();
+		}else {
+			throw new LoginException("Please Enter a valid password");
+		}
+	}
+
+	@Override
+	public String logOutFromAccount(String key) throws LoginException {
+		
+		CurrentUserSession validUserSession=sRepo.findByUuid(key);
+		
+		if(validUserSession==null) {
+			throw new LoginException("User not logged in with this username.");
+		}
+		sRepo.delete(validUserSession);
+		return "Logged out successfully.";
+	}
+
+}

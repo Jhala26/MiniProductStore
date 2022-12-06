@@ -1,0 +1,61 @@
+package com.masai.controller;
+
+import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.masai.exception.CategoryException;
+import com.masai.exception.LoginException;
+import com.masai.model.Category;
+import com.masai.service.CategoryService;
+
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+
+@RestController
+public class CategoryController {
+
+	@Autowired
+	private CategoryService cService;
+	
+	
+	
+	
+	@PostMapping("/category")
+    public ResponseEntity<Category> addCategoryHandler(@Valid @RequestBody Category category,@RequestParam String key) throws CategoryException, LoginException {
+		
+		Category c = cService.addCategory(category,key);
+		
+		return new ResponseEntity<Category>(c, HttpStatus.CREATED);
+	}
+	
+	@PutMapping("/update")
+	public ResponseEntity<Category> updateCategoryHandler( @Valid @RequestBody Category category,@RequestParam String key) throws CategoryException, LoginException{
+		
+		Category c = cservice.updateCategory(category,key);
+		
+		return new ResponseEntity<Category>(c, HttpStatus.ACCEPTED);
+		
+	}
+	
+	@GetMapping("/view/{cId}")
+	public ResponseEntity<Category> viewCategoryHandler(@PathVariable("cId") Integer cId,@RequestParam String key) throws CategoryException, LoginException {
+		
+		Category c = cservice.viewCategory(cId,key);
+		
+		return new ResponseEntity<Category>(c, HttpStatus.FOUND);
+	}
+	
+	@GetMapping("/viewAll")
+	public ResponseEntity<List<Category>> viewAllCategoryHandler(@RequestParam String key) throws LoginException, CategoryException{
+		
+		List<Category> c = cservice.viewAllCategory(key);
+		
+		return new ResponseEntity<List<Category>>(c, HttpStatus.FOUND);
+	}
+	
+	
+	
+}

@@ -1,0 +1,157 @@
+package com.masai.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.masai.exception.UserException;
+import com.masai.model.Order;
+import com.masai.model.User;
+import com.masai.model.runningUserSession;
+import com.masai.repository.RunningSessionDao;
+import com.masai.repository.UserDao;
+
+@Service
+public class UserServiceImpl implements UserService{
+
+	@Autowired
+	private UserDao uDao;
+	
+	@Autowired
+	private RunningSessionDao rDao;
+
+	
+	@Override
+	public User addingUser(User user) throws UserException {
+		
+		User userr = uDao.findByUserName(user.getUserName());
+		
+		if(userr == null) {
+			
+			return uDao.save(user);
+		}
+		else {
+			throw new UserException("This UserName is already used..!");
+		}
+		
+	}
+
+	@Override
+	public User updatingUser(User user, String key) throws UserException {
+		
+		runningUserSession logInUser = rDao.findByUuid(key);
+		
+		if(logInUser == null) {
+			
+			throw new UserException("Please provide a valid key.");
+			
+		}
+		
+		User user1 = uDao.findById(user.getUserLoginId()).orElseThrow(() -> new UserException("User with Id "+ user.getUserLoginId() + "not found")); 
+		
+		if(user.getUserLoginId() == logInUser.getUserId()) {
+			
+			
+			if (user.getContact() != null) user1.setContact(user.getContact());
+			if (user.getEmail() != null) user1.setEmail(user.getEmail());
+			if (user.getFirstName() != null) user1.setFirstName(user.getFirstName());
+			if (user.getLastName() != null) user1.setLastName(user.getLastName());
+			if (user.getPassword() != null) user1.setPassword(user.getPassword());
+			if (user.getUserName() != null) user1.setUserName(user.getUserName());
+			
+			
+			return uDao.save(user1);
+		}
+		else {
+			throw new UserException("Invalid User id");
+		}
+		
+		
+	}
+
+	@Override
+	public User deletingUser(Integer userId, String key) throws UserException {
+		
+		runningUserSession logInUser = rDao.findByUuid(key);
+		
+		if(logInUser == null) {
+			
+			throw new UserException("Please provide a valid key.");
+			
+		}
+		
+		User user = uDao.findById(userId).orElseThrow(() -> new UserException("User with Id "+ userId + "not found"));
+		
+		
+		if(logInUser.getType().equalsIgnoreCase("Admin")) {
+			
+			uDao.delete(user);
+			
+			return user;
+		}
+		else if(user.getUserLoginId() == logInUser.getUserId()) {
+		
+			uDao.delete(user);
+			rDao.delete(logInUser);
+			
+			return uDao.save(user);
+		}
+		else {
+			throw new UserException("Invalid User id");
+		}
+		
+		
+	}
+
+	@Override
+	public User viewUserById(Integer userId, String key) throws UserException {
+		
+		
+		runningUserSession logInUser = rDao.findByUuid(key);
+		
+		if(logInUser == null) {
+			
+			throw new UserException("Please provide a valid key.");
+			
+		}
+
+
+		if(logInUser.getType().equalsIgnoreCase("Admin")) {
+			
+			User user = uDao.findById(userId).orElseThrow(() -> new UserException("User with Id "+ userId + "not found"));
+			
+			return user;
+		}
+		else if(logInUser.getType().equalsIgnoreCase("user")) {
+			
+			User user = uDao.findById(userId).orElseThrow(() -> new UserException("User with Id "+ userId + "not found"));
+			
+			if(user.getUserLoginId() == logInUser.getUserId()) {
+				
+				return user;
+			}
+			else {
+				throw new UserException("Invalid User id");
+			}
+			
+			
+		}
+		else {
+			
+			throw new UserException("Not a Authorised user");
+			
+		}
+		
+		
+	}
+	
+	
+
+	@Override
+	public List<User> viewAllUsers(String key) throws UserException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+}

@@ -1,0 +1,18 @@
+package com.masai.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.masai.repository.ProductDao;
+import com.masai.repository.RunningSessionDao;
+
+@Service
+public class ProductServiceImpl implements ProductService{
+
+	@Autowired
+	private ProductDao pDao;
+	
+	@Autowired
+	private RunningSessionDao rDao;
+	
+}

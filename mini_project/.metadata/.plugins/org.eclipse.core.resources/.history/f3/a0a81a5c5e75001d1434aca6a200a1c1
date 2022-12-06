@@ -1,0 +1,39 @@
+package com.masai.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.masai.exception.CartException;
+import com.masai.exception.ProductException;
+import com.masai.exception.UserException;
+import com.masai.model.Cart;
+import com.masai.model.Product;
+import com.masai.repository.ProductDao;
+import com.masai.repository.UserDao;
+import com.masai.repository.RunningSessionDao;
+
+public class CartServiceImpl implements CartService{
+	
+	@Autowired
+	private CartService cDao;
+	
+	@Autowired
+	private ProductDao pDao;
+	
+	@Autowired
+	private UserDao uDao;
+	
+	@Autowired
+	private RunningSessionDao rDao;
+	
+	
+	
+
+	@Override
+	public Cart addNewProductToCart(Product product, String key) throws ProductException, CartException, UserException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	
+}

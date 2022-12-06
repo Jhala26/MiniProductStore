@@ -1,0 +1,77 @@
+package com.masai.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.masai.exception.CartException;
+import com.masai.exception.ProductException;
+import com.masai.exception.UserException;
+import com.masai.model.Cart;
+import com.masai.model.Product;
+import com.masai.model.User;
+import com.masai.model.runningUserSession;
+import com.masai.repository.CartDao;
+import com.masai.repository.ProductDao;
+import com.masai.repository.UserDao;
+import com.masai.repository.RunningSessionDao;
+
+public class CartServiceImpl implements CartService{
+	
+	@Autowired
+	private CartDao cDao;
+	
+	@Autowired
+	private ProductDao pDao;
+	
+	@Autowired
+	private UserDao uDao;
+	
+	@Autowired
+	private RunningSessionDao rDao;
+	
+	
+	
+
+	@Override
+	public Cart addNewProductToCart(Integer productId, String key) throws ProductException, CartException, UserException {
+		
+		runningUserSession logInUser = rDao.findByUuid(key);
+		
+		if(logInUser == null) {
+			
+			throw new UserException("Please provide a valid key.");
+			
+		}
+		
+		User user = uDao.findById(logInUser.getUserId()).orElseThrow(() -> new UserException("User with Id "+ logInUser.getUuid() + "not found")); 
+		
+		if(user.getUserLoginId() == logInUser.getUserId()) {
+			
+			
+			Product pro = pDao.findById(productId).orElseThrow(() -> new ProductException("Product with id "+ productId + "not found"));
+
+			Cart cart = user.getCart();
+			
+			if(cart == null) {
+				
+				cart = new Cart();
+				
+				user.setCart(cart);
+				
+			}
+			
+			cart.getProList().add(pro);
+			
+			cart.setCartTotalValu();
+			
+			
+			return cDao.save(cart);
+		}
+		
+		
+		
+		
+	}
+
+	
+	
+}
